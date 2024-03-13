@@ -1,3 +1,3 @@
 library async_status_builder;
 
-export 'src/async_status_builder.dart';
+export 'src/stream_status_builder.dart';
