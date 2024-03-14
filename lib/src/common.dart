@@ -46,21 +46,53 @@ class Closed<T> extends StreamStatus<T> {
   final T? data;
 
   const Closed(this.data);
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+
+    return other is Closed &&
+        other.data == data;
+  }
+
+  @override
+  int get hashCode => data.hashCode;
 }
 
-/// The status of a stream that is waiting for data.
+/// The status of waiting for initial data.
 final class Waiting implements FutureStatus<Never>, StreamStatus<Never> {
   const Waiting();
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+
+    return other is Waiting;
+  }
+
+  @override
+  int get hashCode => 0;
 }
 
-/// The status of a stream that has received data.
+/// The status of has received data.
 final class Data<T> implements FutureStatus<T>, StreamStatus<T> {
   final T data;
 
   const Data(this.data);
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+
+    return other is Data &&
+        other.data == data;
+  }
+
+  @override
+  int get hashCode => data.hashCode;
 }
 
-/// The status of a stream that has received an error.
+/// The status of has received an error.
 final class Error<T> implements FutureStatus<T>, StreamStatus<T> {
   final Object error;
   final StackTrace stackTrace;
@@ -68,4 +100,17 @@ final class Error<T> implements FutureStatus<T>, StreamStatus<T> {
   final T? data;
 
   const Error(this.error, this.stackTrace, this.data);
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+
+    return other is Error &&
+        other.error == error &&
+        other.stackTrace == stackTrace &&
+        other.data == data;
+    }
+
+  @override
+  int get hashCode => error.hashCode ^ stackTrace.hashCode ^ data.hashCode;
 }
