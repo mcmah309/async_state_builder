@@ -7,5 +7,6 @@ void main() {
     final object = Object();
     expect((1,"String",object), (1,"String",object));
     expect((1,"String",object), isNot((1,"Strin",object)));
+    expect(const Object(), const Object());
   });
 }

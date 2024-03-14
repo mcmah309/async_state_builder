@@ -1,13 +1,14 @@
 import 'package:async_state_builder/async_state_builder.dart';
 import 'package:flutter/widgets.dart';
 
-/// [UniqueStreamStateBuilder] is a wrapper around [UniqueStreamStateBuilder], designed to initiate a stream 
+/// [LazyStreamStateBuilder] is a wrapper around [LazyStreamStateBuilder], designed to initiate a stream 
 /// through [streamFn] just once for each unique [streamFnKey]. 
 /// This feature is particularly handy for initiating streams within a widget's build phase without 
 /// triggering unnecessary stream rebuilds with every widget update.
-/// e.g. If you want the [streamFn] to be called anytime a parameter changes, you can use those parameters as the key (A,B,C,...).
-/// e.g. You want the [streamFn] to be called on every build, you can use Object() as the key.
-class UniqueStreamStateBuilder<T> extends StatefulWidget {
+/// e.g. If you want the [streamFn] to be called anytime a parameter changes, you can use those parameters as the key `(A,B,C,...)`.
+/// e.g. You want the [streamFn] to be called on every build, you can use `Object()` as the key.
+/// e.g. You want the [streamFn] to never be called on rebuild, you can use `const Object()` or `0`.
+class LazyStreamStateBuilder<T> extends StatefulWidget {
   final Stream<T> Function() streamFn;
   final Object streamFnKey;
   final Widget Function(BuildContext context, StreamState<T> value) builder;
@@ -16,7 +17,7 @@ class UniqueStreamStateBuilder<T> extends StatefulWidget {
   /// If provided, this is the action that should be taken if the stream is still in [Waiting] after the specified duration.
   final WaitingTimeoutAction? waitingTimeoutAction;
 
-  const UniqueStreamStateBuilder({
+  const LazyStreamStateBuilder({
     super.key,
     required this.streamFn,
     required this.streamFnKey,
@@ -26,10 +27,10 @@ class UniqueStreamStateBuilder<T> extends StatefulWidget {
   });
 
   @override
-  UniqueStreamStateBuilderState<T> createState() => UniqueStreamStateBuilderState<T>();
+  LazyStreamStateBuilderState<T> createState() => LazyStreamStateBuilderState<T>();
 }
 
-class UniqueStreamStateBuilderState<T> extends State<UniqueStreamStateBuilder<T>> {
+class LazyStreamStateBuilderState<T> extends State<LazyStreamStateBuilder<T>> {
   late final Stream<T> _stream;
 
   @override
@@ -39,7 +40,7 @@ class UniqueStreamStateBuilderState<T> extends State<UniqueStreamStateBuilder<T>
   }
 
   @override
-  void didUpdateWidget(UniqueStreamStateBuilder<T> oldWidget) {
+  void didUpdateWidget(LazyStreamStateBuilder<T> oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.streamFnKey != widget.streamFnKey) {
       _stream = widget.streamFn();
