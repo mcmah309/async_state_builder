@@ -99,7 +99,7 @@ final class Error<T> implements FutureStatus<T>, StreamStatus<T> {
   /// The last data that was received before the error occurred. Will always be null for [FutureStatus].
   final T? data;
 
-  const Error(this.error, this.stackTrace, this.data);
+  const Error(this.error, this.stackTrace, [this.data]);
 
   @override
   bool operator ==(Object other) {
