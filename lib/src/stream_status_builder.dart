@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/widgets.dart';
 
 import 'common.dart';
@@ -9,7 +11,7 @@ class StreamStatusBuilder<T> extends StatefulWidget {
   final T? initialData;
 
   /// If provided, this is the action that should be taken if the stream is still in [Waiting] after the specified duration.
-  final LoadingTimeoutAction? loadingTimeoutAction;
+  final WaitingTimeoutAction? waitingTimeoutAction;
 
   /// If true, the state will be reset when the stream object changes. Otherwise, the last emitted data will be kept.
   final bool resetOnStreamObjectChange;
@@ -22,7 +24,7 @@ class StreamStatusBuilder<T> extends StatefulWidget {
     required this.stream,
     required this.builder,
     this.initialData,
-    this.loadingTimeoutAction,
+    this.waitingTimeoutAction,
     this.resetOnStreamObjectChange = true,
     this.preserveLastData = true,
   });
@@ -32,73 +34,95 @@ class StreamStatusBuilder<T> extends StatefulWidget {
 }
 
 class StreamStatusBuilderState<T> extends State<StreamStatusBuilder<T>> {
-  /// Will exist if [preserveLastData] is true and the stream has emitted data at least once.
-  Data<T>? _lastData;
-  /// Will be true if the stream is in [Waiting] state.
-  bool _isWaiting = true;
+  StreamSubscription<T>? _subscription;
+  StreamStatus<T>? _status;
+  T? _lastData;
+  Timer? timeoutCallbackOperation;
 
   @override
   void initState() {
     super.initState();
-    if (widget.loadingTimeoutAction != null) {
-      switch (widget.loadingTimeoutAction!) {
-        case LoadingTimeoutCallback(:final loadingTimeout, :final onTimeout):
-          Future.delayed(loadingTimeout, onTimeout).then((value) {
-            if (mounted && _isWaiting) {
-              onTimeout();
-            }
-          });
+    // _status = const Waiting(); // change if we need another initial state, [StreamBuilder] uses none here but it is immediately override in [_subscribe] so there is not point in doing it.
+    if (widget.waitingTimeoutAction != null) {
+      _setTimeout();
+    }
+    _subscribe();
+  }
+
+  @override
+  void didUpdateWidget(StreamStatusBuilder<T> oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.stream != widget.stream) {
+      if (widget.resetOnStreamObjectChange) {
+        _lastData = null;
+      }
+      if (_subscription != null) {
+        _unsubscribe();
+        _status = null;
+      }
+      _subscribe();
+      if (widget.waitingTimeoutAction != oldWidget.waitingTimeoutAction) {
+        if (oldWidget.waitingTimeoutAction != null) {
+          _cancelTimeout();
+        }
+        if (widget.waitingTimeoutAction != null) {
+          _setTimeout();
+        }
       }
     }
   }
 
   @override
-  void didUpdateWidget(covariant StreamStatusBuilder<T> oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (widget.resetOnStreamObjectChange && widget.stream != oldWidget.stream) {
-      _lastData = null;
+  Widget build(BuildContext context) => widget.builder(context, _status!);
+
+  @override
+  void dispose() {
+    _unsubscribe();
+    _cancelTimeout();
+    super.dispose();
+  }
+
+  void _subscribe() {
+    _subscription = widget.stream.listen((T data) {
+      _cancelTimeout();
+      setState(() {
+        final newData = Data(data);
+        _status = newData;
+        _lastData = data;
+      });
+    }, onError: (Object error, StackTrace stackTrace) {
+      _cancelTimeout();
+      setState(() {
+        _status = Error(error, stackTrace, _lastData);
+      });
+    }, onDone: () {
+      _cancelTimeout();
+      setState(() {
+        _status = Closed(_lastData);
+      });
+    });
+    _status = const Waiting();
+  }
+
+  void _unsubscribe() {
+    if (_subscription != null) {
+      _subscription!.cancel();
+      _subscription = null;
     }
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return StreamBuilder<T>(
-      key: widget.resetOnStreamObjectChange ? ObjectKey(widget.stream) : null,
-      initialData: widget.initialData,
-      stream: widget.stream,
-      builder: (context, snapshot) {
-        if (snapshot.hasError) {
-          assert(snapshot.error != null,
-              "StreamBuilder contract violated: `hasError` is true but `error` is null.");
-          assert(snapshot.stackTrace != null,
-              "StreamBuilder contract violated: `hasError` is true but `stackTrace` is null.");
-          _isWaiting = false;
-          return widget.builder(
-              context, Error(snapshot.error!, snapshot.stackTrace!, _lastData?.data));
-        }
-        switch (snapshot.connectionState) {
-          case ConnectionState.none:
-            throw "StreamStatusBuilder contract violated: Since the provided stream is not null, `connectionState` cannot be `none`.";
-          case ConnectionState.waiting:
-            _isWaiting = true;
-            _lastData = null;
-            return widget.builder(context, const Waiting());
-          case ConnectionState.active:
-            assert(snapshot.hasData,
-                "StreamStatusBuilder contract violated: ConnectionState.active must have data.");
-            _isWaiting = false;
-            if (widget.preserveLastData) {
-              _lastData = Data(snapshot.data as T);
-              return widget.builder(context, _lastData!);
-            }
-            else {
-              return widget.builder(context, Data(snapshot.data as T));
-            }
-          case ConnectionState.done:
-            _isWaiting = false;
-            return widget.builder(context, Closed(_lastData?.data));
-        }
-      },
-    );
+  void _setTimeout() {
+    timeoutCallbackOperation?.cancel();
+    switch (widget.waitingTimeoutAction!) {
+      case WaitingTimeoutCallback(:final loadingTimeout, :final onTimeout):
+        timeoutCallbackOperation = Timer(loadingTimeout, onTimeout);
+    }
+  }
+
+  void _cancelTimeout() {
+    if (timeoutCallbackOperation != null) {
+      timeoutCallbackOperation!.cancel();
+      timeoutCallbackOperation = null;
+    }
   }
 }
