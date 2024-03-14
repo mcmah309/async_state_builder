@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/widgets.dart';
 
 import 'common.dart';
@@ -9,18 +11,14 @@ class FutureStatusBuilder<T> extends StatefulWidget {
   final T? initialData;
 
   /// If provided, this is the action that should be taken if the future is still in [Waiting] after the specified duration.
-  final WaitingTimeoutAction? loadingTimeoutAction;
-
-  /// If true, the state will be reset when the future changes. Otherwise, the last emitted data will be kept.
-  final bool resetOnFutureChange;
+  final WaitingTimeoutAction? waitingTimeoutAction;
 
   const FutureStatusBuilder({
     super.key,
     required this.future,
     required this.builder,
     this.initialData,
-    this.loadingTimeoutAction,
-    this.resetOnFutureChange = true,
+    this.waitingTimeoutAction,
   });
 
   /// Whether the latest error received by the asynchronous computation should
@@ -42,10 +40,14 @@ class FutureStatusBuilderState<T> extends State<FutureStatusBuilder<T>> {
   /// or after widget reconfiguration to a new Future.
   Object? _activeCallbackIdentity;
   FutureStatus<T>? _status;
+  Timer? _timeoutCallbackOperation;
 
   @override
   void initState() {
     super.initState();
+    if (widget.waitingTimeoutAction != null) {
+      _setTimeout();
+    }
     _subscribe();
   }
 
@@ -55,10 +57,16 @@ class FutureStatusBuilderState<T> extends State<FutureStatusBuilder<T>> {
     if (oldWidget.future == widget.future) {
       return;
     }
+    if (oldWidget.waitingTimeoutAction != null) {
+      _cancelTimeout();
+    }
     if (_activeCallbackIdentity != null) {
       _unsubscribe();
     }
     _subscribe();
+    if (widget.waitingTimeoutAction != null && _status is Waiting) {
+      _setTimeout();
+    }
   }
 
   @override
@@ -74,12 +82,14 @@ class FutureStatusBuilderState<T> extends State<FutureStatusBuilder<T>> {
     final Object callbackIdentity = Object();
     _activeCallbackIdentity = callbackIdentity;
     widget.future.then<void>((T data) {
+      _cancelTimeout();
       if (_activeCallbackIdentity == callbackIdentity) {
         setState(() {
           _status = Data(data);
         });
       }
     }, onError: (Object error, StackTrace stackTrace) {
+      _cancelTimeout();
       if (_activeCallbackIdentity == callbackIdentity) {
         setState(() {
           _status = Error(error, stackTrace);
@@ -94,20 +104,32 @@ class FutureStatusBuilderState<T> extends State<FutureStatusBuilder<T>> {
     });
     // An implementation like `SynchronousFuture` may have already ran the above future and called the
     // .then closure. Do not overwrite it in that case.
-    if (_status is! Data<T>) {
-      if (widget.initialData != null) {
+    if (_status == null) {
+      if (widget.initialData == null) {
+        _status = const Waiting();
+      } else {
         _status = Data(widget.initialData as T);
       }
-      else {
-        _status = const Waiting();
-      }
-    } else {
-      _status = const Waiting();
-    } 
+    }
   }
 
   void _unsubscribe() {
     _activeCallbackIdentity = null;
     _status = null;
+  }
+
+  void _setTimeout() {
+    _timeoutCallbackOperation?.cancel();
+    switch (widget.waitingTimeoutAction!) {
+      case WaitingTimeoutCallback(:final loadingTimeout, :final onTimeout):
+        _timeoutCallbackOperation = Timer(loadingTimeout, onTimeout);
+    }
+  }
+
+  void _cancelTimeout() {
+    if (_timeoutCallbackOperation != null) {
+      _timeoutCallbackOperation!.cancel();
+      _timeoutCallbackOperation = null;
+    }
   }
 }
