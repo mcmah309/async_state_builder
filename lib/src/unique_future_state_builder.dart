@@ -1,12 +1,13 @@
 import 'package:async_state_builder/async_state_builder.dart';
 import 'package:flutter/widgets.dart';
 
-/// [OnceFutureStateBuilder] is a wrapper around [FutureStateBuilder] that allows you specify a function that builds the
-/// future. The [futureFn] will only be called once for each unique [futureFnKey]. This is useful when you want to create the future in the
-/// build method of a widget, but you don't want to rebuild the future every time the widget is rebuilt.
+/// [UniqueFutureStateBuilder] is a wrapper around [FutureStateBuilder], designed to initiate a future 
+/// through [futureFn] just once for each unique [futureFnKey]. 
+/// This feature is particularly handy for initiating futures within a widget's build phase without 
+/// triggering unnecessary future rebuilds with every widget update.
 /// e.g. If you want the [futureFn] to be called anytime a parameter changes, you can use those parameters as the key (A,B,C,...).
 /// e.g. You want the [futureFn] to be called on every build, you can use Object() as the key.
-class OnceFutureStateBuilder<T> extends StatefulWidget {
+class UniqueFutureStateBuilder<T> extends StatefulWidget {
   final Future<T> Function() futureFn;
   final Object futureFnKey;
   final Widget Function(BuildContext context, FutureState<T> value) builder;
@@ -15,7 +16,7 @@ class OnceFutureStateBuilder<T> extends StatefulWidget {
   /// If provided, this is the action that should be taken if the future is still in [Waiting] after the specified duration.
   final WaitingTimeoutAction? waitingTimeoutAction;
 
-  const OnceFutureStateBuilder({
+  const UniqueFutureStateBuilder({
     super.key,
     required this.futureFn,
     required this.futureFnKey,
@@ -25,30 +26,30 @@ class OnceFutureStateBuilder<T> extends StatefulWidget {
   });
 
   @override
-  OnceFutureStateBuilderState<T> createState() => OnceFutureStateBuilderState<T>();
+  UniqueFutureStateBuilderState<T> createState() => UniqueFutureStateBuilderState<T>();
 }
 
-class OnceFutureStateBuilderState<T> extends State<OnceFutureStateBuilder<T>> {
-  late final Future<T> future;
+class UniqueFutureStateBuilderState<T> extends State<UniqueFutureStateBuilder<T>> {
+  late final Future<T> _future;
 
   @override
   void initState() {
     super.initState();
-    future = widget.futureFn();
+    _future = widget.futureFn();
   }
 
   @override
-  void didUpdateWidget(OnceFutureStateBuilder<T> oldWidget) {
+  void didUpdateWidget(UniqueFutureStateBuilder<T> oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.futureFnKey != widget.futureFnKey) {
-      future = widget.futureFn();
+      _future = widget.futureFn();
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return FutureStateBuilder(
-        future: future,
+        future: _future,
         builder: widget.builder,
         initialData: widget.initialData,
         waitingTimeoutAction: widget.waitingTimeoutAction);
