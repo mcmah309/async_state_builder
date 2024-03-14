@@ -9,21 +9,13 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.11.0"
-  async_status:
-    dependency: transitive
-    description:
-      name: async_status
-      sha256: "335aef1222c6fe42330fec63e103844c5560528883d242d55db87aa0f4d35bff"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.1.0"
-  async_status_builder:
+  async_state_builder:
     dependency: "direct main"
     description:
       path: ".."
       relative: true
     source: path
-    version: "0.0.1"
+    version: "0.1.0"
   boolean_selector:
     dependency: transitive
     description:
@@ -146,14 +138,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.9.0"
-  rxdart:
-    dependency: transitive
-    description:
-      name: rxdart
-      sha256: "0c7c0cedd93788d996e33041ffecda924cc54389199cde4e6a34b440f50044cb"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.27.7"
   sky_engine:
     dependency: transitive
     description: flutter

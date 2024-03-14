@@ -32,16 +32,16 @@ class WaitingTimeoutCallback extends WaitingTimeoutAction {
 
 /// The status of a stream.
 
-sealed class StreamStatus<T> {
-  const StreamStatus();
+sealed class StreamState<T> {
+  const StreamState();
 }
 
-sealed class FutureStatus<T> {
-  const FutureStatus();
+sealed class FutureState<T> {
+  const FutureState();
 }
 
 /// The status of a stream that has been closed.
-class Closed<T> extends StreamStatus<T> {
+class Closed<T> extends StreamState<T> {
   /// The last data that was received before the stream was closed.
   final T? data;
 
@@ -60,7 +60,7 @@ class Closed<T> extends StreamStatus<T> {
 }
 
 /// The status of waiting for initial data.
-final class Waiting implements FutureStatus<Never>, StreamStatus<Never> {
+final class Waiting implements FutureState<Never>, StreamState<Never> {
   const Waiting();
 
   @override
@@ -75,7 +75,7 @@ final class Waiting implements FutureStatus<Never>, StreamStatus<Never> {
 }
 
 /// The status of has received data.
-final class Data<T> implements FutureStatus<T>, StreamStatus<T> {
+final class Data<T> implements FutureState<T>, StreamState<T> {
   final T data;
 
   const Data(this.data);
@@ -93,10 +93,10 @@ final class Data<T> implements FutureStatus<T>, StreamStatus<T> {
 }
 
 /// The status of has received an error.
-final class Error<T> implements FutureStatus<T>, StreamStatus<T> {
+final class Error<T> implements FutureState<T>, StreamState<T> {
   final Object error;
   final StackTrace stackTrace;
-  /// The last data that was received before the error occurred. Will always be null for [FutureStatus].
+  /// The last data that was received before the error occurred. Will always be null for [FutureState].
   final T? data;
 
   const Error(this.error, this.stackTrace, [this.data]);

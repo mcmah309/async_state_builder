@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'package:async_status_builder/async_status_builder.dart';
+import 'package:async_state_builder/async_state_builder.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -65,18 +65,18 @@ class FuturePageState extends State<FuturePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('FutureStatusBuilder example'),
+        title: const Text('FutureStateBuilder example'),
       ),
       body: _hasWaitedTooLong ? const Center(child: Text("Waited too long, callback invoked")) : (_future == null
           ? const Center(child: Text("No future selected."))
-          : FutureStatusBuilder<int>(
+          : FutureStateBuilder<int>(
               future: _future!,
               waitingTimeoutAction: WaitingTimeoutCallback(const Duration(seconds: 5), () {
                 setState(() {
                   _hasWaitedTooLong = true;
                 });
               }),
-              builder: (BuildContext context, FutureStatus<int> status) {
+              builder: (BuildContext context, FutureState<int> status) {
                 return Center(
                     child: switch (status) {
                   Waiting() => const Text('Waiting for data...'),

@@ -1,4 +1,4 @@
-name: async_status_builder
+name: async_state_builder
 description: "Implementation of the Future Builder and Stream Builder widgets as state machines."
 version: 0.1.0
 repository: https://github.com/mcmah309/async_status_builder

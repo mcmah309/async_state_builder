@@ -5,9 +5,9 @@ import 'package:flutter/widgets.dart';
 import 'common.dart';
 
 /// A [StreamBuilder] which the state of the stream can be pattern matched.
-class StreamStatusBuilder<T> extends StatefulWidget {
+class StreamStateBuilder<T> extends StatefulWidget {
   final Stream<T> stream;
-  final Widget Function(BuildContext context, StreamStatus<T> value) builder;
+  final Widget Function(BuildContext context, StreamState<T> value) builder;
   final T? initialData;
 
   /// If provided, this is the action that should be taken if the stream is still in [Waiting] after the specified duration.
@@ -19,7 +19,7 @@ class StreamStatusBuilder<T> extends StatefulWidget {
   /// If true, the last data will be preserved between builds. This is useful to not losing data when the stream becomes [Error] or [Closed].
   final bool preserveLastData;
 
-  const StreamStatusBuilder({
+  const StreamStateBuilder({
     super.key,
     required this.stream,
     required this.builder,
@@ -30,12 +30,12 @@ class StreamStatusBuilder<T> extends StatefulWidget {
   });
 
   @override
-  State<StatefulWidget> createState() => StreamStatusBuilderState<T>();
+  State<StatefulWidget> createState() => StreamStateBuilderState<T>();
 }
 
-class StreamStatusBuilderState<T> extends State<StreamStatusBuilder<T>> {
+class StreamStateBuilderState<T> extends State<StreamStateBuilder<T>> {
   StreamSubscription<T>? _subscription;
-  StreamStatus<T>? _status;
+  StreamState<T>? _status;
   T? _lastData;
   Timer? _timeoutCallbackOperation;
 
@@ -50,7 +50,7 @@ class StreamStatusBuilderState<T> extends State<StreamStatusBuilder<T>> {
   }
 
   @override
-  void didUpdateWidget(StreamStatusBuilder<T> oldWidget) {
+  void didUpdateWidget(StreamStateBuilder<T> oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.stream == widget.stream) {
       return;

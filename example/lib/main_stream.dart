@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'package:async_status_builder/async_status_builder.dart';
+import 'package:async_state_builder/async_state_builder.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -51,18 +51,18 @@ class CounterPageState extends State<CounterPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('StreamStatusBuilder example'),
+        title: const Text('StreamStateBuilder example'),
       ),
       body: _hasWaitedTooLong
           ? const Center(child: Text("Waited too long, callback invoked"))
-          : StreamStatusBuilder<int>(
+          : StreamStateBuilder<int>(
               stream: _counterController.stream,
               waitingTimeoutAction: WaitingTimeoutCallback(const Duration(seconds: 5), () {
                 setState(() {
                   _hasWaitedTooLong = true;
                 });
               }),
-              builder: (BuildContext context, StreamStatus<int> status) {
+              builder: (BuildContext context, StreamState<int> status) {
                 return Center(
                     child: switch (status) {
                   Waiting() => const Text('Waiting for data...'),
