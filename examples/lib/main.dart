@@ -23,6 +23,7 @@ class CounterPage extends StatefulWidget {
 class _CounterPageState extends State<CounterPage> {
   StreamController<int> _counterController = StreamController<int>();
   int _counter = 0;
+  bool _hasWaitedTooLong = false;
 
   @override
   void initState() {
@@ -48,20 +49,29 @@ class _CounterPageState extends State<CounterPage> {
       appBar: AppBar(
         title: Text('Counter App'),
       ),
-      body: StreamStatusBuilder<int>(
-        stream: _counterController.stream,
-        builder: (BuildContext context, StreamStatus<int> status) {
-          return Center(
-              child: switch (status) {
-            Waiting() => const Text('Waiting for data...'),
-            Error<int>(:final data?, :final error) => Text('Error, recieved before error: $data. Error: $error'),
-            Closed<int>(:final data?) => Text('Closed, data recieved before closing: $data'),
-            Data<int>(:final data) => Text('Data sent without error: $data'),
-            Error<int>(:final error) => Text('Error recieved before any data was sent. Error: $error'),
-            Closed<int>() => const Text('Stream closed, before any data was sent'),
-          });
-        },
-      ),
+      body: _hasWaitedTooLong
+          ? const Center(child: Text("Waited too long, callback invoked"))
+          : StreamStatusBuilder<int>(
+              stream: _counterController.stream,
+              waitingTimeoutAction: WaitingTimeoutCallback(const Duration(seconds: 5), () {
+                setState(() {
+                  _hasWaitedTooLong = true;
+                });
+              }),
+              builder: (BuildContext context, StreamStatus<int> status) {
+                return Center(
+                    child: switch (status) {
+                  Waiting() => const Text('Waiting for data...'),
+                  Error<int>(:final data?, :final error) =>
+                    Text('Error, recieved before error: $data. Error: $error'),
+                  Closed<int>(:final data?) => Text('Closed, data recieved before closing: $data'),
+                  Data<int>(:final data) => Text('Data sent without error: $data'),
+                  Error<int>(:final error) =>
+                    Text('Error recieved before any data was sent. Error: $error'),
+                  Closed<int>() => const Text('Stream closed, before any data was sent'),
+                });
+              },
+            ),
       floatingActionButton: Column(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
@@ -71,6 +81,7 @@ class _CounterPageState extends State<CounterPage> {
                 _counterController.close();
                 _counterController = StreamController();
                 _counter = 0;
+                _hasWaitedTooLong = false;
               });
             },
             tooltip: 'Restart',
@@ -79,7 +90,7 @@ class _CounterPageState extends State<CounterPage> {
           const SizedBox(height: 10),
           FloatingActionButton(
             onPressed: _incrementCounter,
-            tooltip: 'Increment',
+            tooltip: 'Send Data',
             child: const Icon(Icons.add),
           ),
           const SizedBox(height: 10),
