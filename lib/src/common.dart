@@ -2,16 +2,30 @@
 
 import 'package:flutter/widgets.dart';
 
-sealed class LoadingTimeoutAction {
+sealed class WaitingTimeoutAction {
   final Duration loadingTimeout;
 
-  const LoadingTimeoutAction(this.loadingTimeout);
+  const WaitingTimeoutAction(this.loadingTimeout);
 }
 
-class LoadingTimeoutCallback extends LoadingTimeoutAction {
+/// An action to be taken if the stream is still in [Waiting] after the specified duration.
+/// The function should likely not be created in the build method, as this may cause the timer to be reset.
+class WaitingTimeoutCallback extends WaitingTimeoutAction {
   final VoidCallback onTimeout;
 
-  const LoadingTimeoutCallback(super.loadingTimeout, this.onTimeout);
+  const WaitingTimeoutCallback(super.loadingTimeout, this.onTimeout);
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+
+    return other is WaitingTimeoutCallback &&
+        other.loadingTimeout == loadingTimeout &&
+        other.onTimeout == onTimeout;
+  }
+
+  @override
+  int get hashCode => loadingTimeout.hashCode ^ onTimeout.hashCode;
 }
 
 //************************************************************************//
