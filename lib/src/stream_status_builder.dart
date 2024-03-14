@@ -2,6 +2,7 @@ import 'package:flutter/widgets.dart';
 
 import 'common.dart';
 
+/// A [StreamBuilder] which the state of the stream can be pattern matched.
 class StreamStatusBuilder<T> extends StatefulWidget {
   final Stream<T> stream;
   final Widget Function(BuildContext context, StreamStatus<T> value) builder;
