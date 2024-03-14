@@ -101,7 +101,13 @@ class StreamStatusBuilderState<T> extends State<StreamStatusBuilder<T>> {
         _status = Closed(_lastData);
       });
     });
-    _status = const Waiting();
+    if(widget.initialData != null) {
+      _lastData = widget.initialData;
+      _status = Data(widget.initialData as T);
+    }
+    else {
+      _status = const Waiting();
+    }
   }
 
   void _unsubscribe() {
