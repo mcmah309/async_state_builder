@@ -37,7 +37,7 @@ class StreamStatusBuilderState<T> extends State<StreamStatusBuilder<T>> {
   StreamSubscription<T>? _subscription;
   StreamStatus<T>? _status;
   T? _lastData;
-  Timer? timeoutCallbackOperation;
+  Timer? _timeoutCallbackOperation;
 
   @override
   void initState() {
@@ -52,23 +52,22 @@ class StreamStatusBuilderState<T> extends State<StreamStatusBuilder<T>> {
   @override
   void didUpdateWidget(StreamStatusBuilder<T> oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.stream != widget.stream) {
-      if (widget.resetOnStreamObjectChange) {
-        _lastData = null;
-      }
-      if (_subscription != null) {
-        _unsubscribe();
-        _status = null;
-      }
-      _subscribe();
-      if (widget.waitingTimeoutAction != oldWidget.waitingTimeoutAction) {
-        if (oldWidget.waitingTimeoutAction != null) {
-          _cancelTimeout();
-        }
-        if (widget.waitingTimeoutAction != null) {
-          _setTimeout();
-        }
-      }
+    if (oldWidget.stream == widget.stream) {
+      return;
+    }
+    if (oldWidget.waitingTimeoutAction != null) {
+      _cancelTimeout();
+    }
+    if (widget.resetOnStreamObjectChange) {
+      _lastData = null;
+    }
+    if (_subscription != null) {
+      _unsubscribe();
+      _status = null;
+    }
+    _subscribe();
+    if (widget.waitingTimeoutAction != null && _status is Waiting) {
+      _setTimeout();
     }
   }
 
@@ -101,12 +100,14 @@ class StreamStatusBuilderState<T> extends State<StreamStatusBuilder<T>> {
         _status = Closed(_lastData);
       });
     });
-    if(widget.initialData != null) {
-      _lastData = widget.initialData;
-      _status = Data(widget.initialData as T);
-    }
-    else {
-      _status = const Waiting();
+    // An implementation like a sync stream may have already ran the above. Do not overwrite it in that case.
+    if (_status == null) {
+      if (widget.initialData == null) {
+        _status = const Waiting();
+      } else {
+        _lastData = widget.initialData;
+        _status = Data(widget.initialData as T);
+      }
     }
   }
 
@@ -118,17 +119,17 @@ class StreamStatusBuilderState<T> extends State<StreamStatusBuilder<T>> {
   }
 
   void _setTimeout() {
-    timeoutCallbackOperation?.cancel();
+    _timeoutCallbackOperation?.cancel();
     switch (widget.waitingTimeoutAction!) {
       case WaitingTimeoutCallback(:final loadingTimeout, :final onTimeout):
-        timeoutCallbackOperation = Timer(loadingTimeout, onTimeout);
+        _timeoutCallbackOperation = Timer(loadingTimeout, onTimeout);
     }
   }
 
   void _cancelTimeout() {
-    if (timeoutCallbackOperation != null) {
-      timeoutCallbackOperation!.cancel();
-      timeoutCallbackOperation = null;
+    if (_timeoutCallbackOperation != null) {
+      _timeoutCallbackOperation!.cancel();
+      _timeoutCallbackOperation = null;
     }
   }
 }
