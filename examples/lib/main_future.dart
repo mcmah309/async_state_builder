@@ -3,25 +3,30 @@ import 'package:async_status_builder/async_status_builder.dart';
 import 'package:flutter/material.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: CounterPage(),
+    return const MaterialApp(
+      home: FuturePage(),
     );
   }
 }
 
-class CounterPage extends StatefulWidget {
+class FuturePage extends StatefulWidget {
+  const FuturePage({super.key});
+
   @override
-  _CounterPageState createState() => _CounterPageState();
+  FuturePageState createState() => FuturePageState();
 }
 
-class _CounterPageState extends State<CounterPage> {
+class FuturePageState extends State<FuturePage> {
   Future<int>? _future;
+  bool _hasWaitedTooLong = false;
 
   @override
   void initState() {
@@ -31,24 +36,28 @@ class _CounterPageState extends State<CounterPage> {
   void _normalFuture() {
     setState((){
     _future = Future.value(200);
+    _hasWaitedTooLong = false;
     });
   }
 
   void _futureWithError() {
     setState((){
     _future = Future.error('An error occurred!');
+    _hasWaitedTooLong = false;
     });
   }
 
   void _futureWithLargeTimeout() {
     setState((){
     _future = Future.delayed(const Duration(seconds: 100), () => 500);
+    _hasWaitedTooLong = false;
     });
   }
 
   void _futureWithSmallTimeout() {
     setState((){
     _future = Future.delayed(const Duration(seconds: 2), () => 100);
+    _hasWaitedTooLong = false;
     });
   }
 
@@ -58,10 +67,15 @@ class _CounterPageState extends State<CounterPage> {
       appBar: AppBar(
         title: const Text('FutureStatusBuilder example'),
       ),
-      body: _future == null
+      body: _hasWaitedTooLong ? const Center(child: Text("Waited too long, callback invoked")) : (_future == null
           ? const Center(child: Text("No future selected."))
           : FutureStatusBuilder<int>(
               future: _future!,
+              waitingTimeoutAction: WaitingTimeoutCallback(const Duration(seconds: 5), () {
+                setState(() {
+                  _hasWaitedTooLong = true;
+                });
+              }),
               builder: (BuildContext context, FutureStatus<int> status) {
                 return Center(
                     child: switch (status) {
@@ -71,7 +85,7 @@ class _CounterPageState extends State<CounterPage> {
                     Text('Future completed with error. Error: $error'),
                 });
               },
-            ),
+            )),
       floatingActionButton: Column(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
@@ -79,6 +93,7 @@ class _CounterPageState extends State<CounterPage> {
             onPressed: () {
               setState(() {
                 _future = null;
+                _hasWaitedTooLong = false;
               });
             },
             tooltip: 'Restart',
