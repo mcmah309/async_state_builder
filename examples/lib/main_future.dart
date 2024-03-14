@@ -101,6 +101,15 @@ class FuturePageState extends State<FuturePage> {
           ),
           const SizedBox(height: 10),
           FloatingActionButton(
+            onPressed: () {
+              setState(() {
+              });
+            },
+            tooltip: 'Trigger rebuild',
+            child: const Icon(Icons.build),
+          ),
+          const SizedBox(height: 10),
+          FloatingActionButton(
             onPressed: _normalFuture,
             tooltip: 'Normal future',
             child: const Icon(Icons.add),
