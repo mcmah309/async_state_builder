@@ -1,3 +1,8 @@
+## 0.3.0
+
+- Add LazyStreamStateBuilder
+- Add LazyStreamStateBuilder
+
 ## 0.2.0
 
 - Rename Status -> State
