@@ -1,6 +1,6 @@
 name: async_status_builder
-description: "Builder Widget for async_status package."
-version: 0.0.1
+description: "Future Builder and Stream Builder widgets as a state machine."
+version: 0.1.0
 homepage:
 
 environment:
