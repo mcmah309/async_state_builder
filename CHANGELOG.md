@@ -1,3 +1,7 @@
+## 0.3.1
+
+- Fix lazy init error
+
 ## 0.3.0
 
 - Add LazyStreamStateBuilder
