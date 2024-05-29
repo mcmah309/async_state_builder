@@ -31,7 +31,7 @@ class LazyStreamStateBuilder<T> extends StatefulWidget {
 }
 
 class LazyStreamStateBuilderState<T> extends State<LazyStreamStateBuilder<T>> {
-  late final Stream<T> _stream;
+  late Stream<T> _stream;
 
   @override
   void initState() {

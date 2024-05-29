@@ -31,7 +31,7 @@ class LazyFutureStateBuilder<T> extends StatefulWidget {
 }
 
 class LazyFutureStateBuilderState<T> extends State<LazyFutureStateBuilder<T>> {
-  late final Future<T> _future;
+  late Future<T> _future;
 
   @override
   void initState() {
