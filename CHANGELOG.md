@@ -1,3 +1,7 @@
+## 0.3.2
+
+- Add Docs
+
 ## 0.3.1
 
 - Fix lazy init error

@@ -36,7 +36,7 @@ As with pattern matching you can code for only the states you care about
 switch (status) {
     Waiting() => const Text('Waiting for data...'),
     Data<int>(:final data) || Closed<int>(:final data?) => Text('Data sent without error: $data'),
-    _ => Text('Error, received before error: $data. Error: $error'),
+    _ => Text('Unexpected Error'),
 };
 ```
 
