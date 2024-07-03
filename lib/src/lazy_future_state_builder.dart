@@ -1,9 +1,9 @@
 import 'package:async_state_builder/async_state_builder.dart';
 import 'package:flutter/widgets.dart';
 
-/// [LazyFutureStateBuilder] is a wrapper around [FutureStateBuilder], designed to initiate a future 
-/// through [futureFn] just once for each unique [futureFnKey]. 
-/// This feature is particularly handy for initiating futures within a widget's build phase without 
+/// [LazyFutureStateBuilder] is a wrapper around [FutureStateBuilder], designed to initiate a future
+/// through [futureFn] just once for each unique [futureFnKey].
+/// This feature is particularly handy for initiating futures within a widget's build phase without
 /// triggering unnecessary future rebuilds with every widget update.
 /// e.g. If you want the [futureFn] to be called anytime a parameter changes, you can use those parameters as the key (A,B,C,...).
 /// e.g. You want the [futureFn] to be called on every build, you can use Object() as the key.
@@ -27,7 +27,8 @@ class LazyFutureStateBuilder<T> extends StatefulWidget {
   });
 
   @override
-  LazyFutureStateBuilderState<T> createState() => LazyFutureStateBuilderState<T>();
+  LazyFutureStateBuilderState<T> createState() =>
+      LazyFutureStateBuilderState<T>();
 }
 
 class LazyFutureStateBuilderState<T> extends State<LazyFutureStateBuilder<T>> {

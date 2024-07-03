@@ -1,9 +1,9 @@
 import 'package:async_state_builder/async_state_builder.dart';
 import 'package:flutter/widgets.dart';
 
-/// [LazyStreamStateBuilder] is a wrapper around [LazyStreamStateBuilder], designed to initiate a stream 
-/// through [streamFn] just once for each unique [streamFnKey]. 
-/// This feature is particularly handy for initiating streams within a widget's build phase without 
+/// [LazyStreamStateBuilder] is a wrapper around [LazyStreamStateBuilder], designed to initiate a stream
+/// through [streamFn] just once for each unique [streamFnKey].
+/// This feature is particularly handy for initiating streams within a widget's build phase without
 /// triggering unnecessary stream rebuilds with every widget update.
 /// e.g. If you want the [streamFn] to be called anytime a parameter changes, you can use those parameters as the key `(A,B,C,...)`.
 /// e.g. You want the [streamFn] to be called on every build, you can use `Object()` as the key.
@@ -27,7 +27,8 @@ class LazyStreamStateBuilder<T> extends StatefulWidget {
   });
 
   @override
-  LazyStreamStateBuilderState<T> createState() => LazyStreamStateBuilderState<T>();
+  LazyStreamStateBuilderState<T> createState() =>
+      LazyStreamStateBuilderState<T>();
 }
 
 class LazyStreamStateBuilderState<T> extends State<LazyStreamStateBuilder<T>> {

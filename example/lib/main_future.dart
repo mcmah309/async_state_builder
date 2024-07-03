@@ -34,30 +34,30 @@ class FuturePageState extends State<FuturePage> {
   }
 
   void _normalFuture() {
-    setState((){
-    _future = Future.value(200);
-    _hasWaitedTooLong = false;
+    setState(() {
+      _future = Future.value(200);
+      _hasWaitedTooLong = false;
     });
   }
 
   void _futureWithError() {
-    setState((){
-    _future = Future.error('An error occurred!');
-    _hasWaitedTooLong = false;
+    setState(() {
+      _future = Future.error('An error occurred!');
+      _hasWaitedTooLong = false;
     });
   }
 
   void _futureWithLargeTimeout() {
-    setState((){
-    _future = Future.delayed(const Duration(seconds: 100), () => 500);
-    _hasWaitedTooLong = false;
+    setState(() {
+      _future = Future.delayed(const Duration(seconds: 100), () => 500);
+      _hasWaitedTooLong = false;
     });
   }
 
   void _futureWithSmallTimeout() {
-    setState((){
-    _future = Future.delayed(const Duration(seconds: 2), () => 100);
-    _hasWaitedTooLong = false;
+    setState(() {
+      _future = Future.delayed(const Duration(seconds: 2), () => 100);
+      _hasWaitedTooLong = false;
     });
   }
 
@@ -67,25 +67,29 @@ class FuturePageState extends State<FuturePage> {
       appBar: AppBar(
         title: const Text('FutureStateBuilder example'),
       ),
-      body: _hasWaitedTooLong ? const Center(child: Text("Waited too long, callback invoked")) : (_future == null
-          ? const Center(child: Text("No future selected."))
-          : FutureStateBuilder<int>(
-              future: _future!,
-              waitingTimeoutAction: WaitingTimeoutCallback(const Duration(seconds: 5), () {
-                setState(() {
-                  _hasWaitedTooLong = true;
-                });
-              }),
-              builder: (BuildContext context, FutureState<int> status) {
-                return Center(
-                    child: switch (status) {
-                  Waiting() => const Text('Waiting for data...'),
-                  Data<int>(:final data) => Text('Future completed without error. Data: $data'),
-                  Error<int>(:final error) =>
-                    Text('Future completed with error. Error: $error'),
-                });
-              },
-            )),
+      body: _hasWaitedTooLong
+          ? const Center(child: Text("Waited too long, callback invoked"))
+          : (_future == null
+              ? const Center(child: Text("No future selected."))
+              : FutureStateBuilder<int>(
+                  future: _future!,
+                  waitingTimeoutAction:
+                      WaitingTimeoutCallback(const Duration(seconds: 5), () {
+                    setState(() {
+                      _hasWaitedTooLong = true;
+                    });
+                  }),
+                  builder: (BuildContext context, FutureState<int> status) {
+                    return Center(
+                        child: switch (status) {
+                      Waiting() => const Text('Waiting for data...'),
+                      Data<int>(:final data) =>
+                        Text('Future completed without error. Data: $data'),
+                      Error<int>(:final error) =>
+                        Text('Future completed with error. Error: $error'),
+                    });
+                  },
+                )),
       floatingActionButton: Column(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
@@ -102,8 +106,7 @@ class FuturePageState extends State<FuturePage> {
           const SizedBox(height: 10),
           FloatingActionButton(
             onPressed: () {
-              setState(() {
-              });
+              setState(() {});
             },
             tooltip: 'Trigger rebuild',
             child: const Icon(Icons.build),

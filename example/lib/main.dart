@@ -57,7 +57,8 @@ class CounterPageState extends State<CounterPage> {
           ? const Center(child: Text("Waited too long, callback invoked"))
           : StreamStateBuilder<int>(
               stream: _counterController.stream,
-              waitingTimeoutAction: WaitingTimeoutCallback(const Duration(seconds: 5), () {
+              waitingTimeoutAction:
+                  WaitingTimeoutCallback(const Duration(seconds: 5), () {
                 setState(() {
                   _hasWaitedTooLong = true;
                 });
@@ -68,11 +69,14 @@ class CounterPageState extends State<CounterPage> {
                   Waiting() => const Text('Waiting for data...'),
                   Error<int>(:final data?, :final error) =>
                     Text('Error, recieved before error: $data. Error: $error'),
-                  Closed<int>(:final data?) => Text('Closed, data recieved before closing: $data'),
-                  Data<int>(:final data) => Text('Data sent without error: $data'),
-                  Error<int>(:final error) =>
-                    Text('Error recieved before any data was sent. Error: $error'),
-                  Closed<int>() => const Text('Stream closed, before any data was sent'),
+                  Closed<int>(:final data?) =>
+                    Text('Closed, data recieved before closing: $data'),
+                  Data<int>(:final data) =>
+                    Text('Data sent without error: $data'),
+                  Error<int>(:final error) => Text(
+                      'Error recieved before any data was sent. Error: $error'),
+                  Closed<int>() =>
+                    const Text('Stream closed, before any data was sent'),
                 });
               },
             ),
@@ -94,8 +98,7 @@ class CounterPageState extends State<CounterPage> {
           const SizedBox(height: 10),
           FloatingActionButton(
             onPressed: () {
-              setState(() {
-              });
+              setState(() {});
             },
             tooltip: 'Trigger rebuild',
             child: const Icon(Icons.build),

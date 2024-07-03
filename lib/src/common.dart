@@ -1,5 +1,3 @@
-
-
 import 'package:flutter/widgets.dart';
 
 sealed class WaitingTimeoutAction {
@@ -51,8 +49,7 @@ class Closed<T> extends StreamState<T> {
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
 
-    return other is Closed &&
-        other.data == data;
+    return other is Closed && other.data == data;
   }
 
   @override
@@ -84,8 +81,7 @@ final class Data<T> implements FutureState<T>, StreamState<T> {
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
 
-    return other is Data &&
-        other.data == data;
+    return other is Data && other.data == data;
   }
 
   @override
@@ -96,6 +92,7 @@ final class Data<T> implements FutureState<T>, StreamState<T> {
 final class Error<T> implements FutureState<T>, StreamState<T> {
   final Object error;
   final StackTrace stackTrace;
+
   /// The last data that was received before the error occurred. Will always be null for [FutureState].
   final T? data;
 
@@ -109,7 +106,7 @@ final class Error<T> implements FutureState<T>, StreamState<T> {
         other.error == error &&
         other.stackTrace == stackTrace &&
         other.data == data;
-    }
+  }
 
   @override
   int get hashCode => error.hashCode ^ stackTrace.hashCode ^ data.hashCode;

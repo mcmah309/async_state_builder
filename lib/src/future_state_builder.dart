@@ -33,7 +33,6 @@ class FutureStateBuilder<T> extends StatefulWidget {
   State<StatefulWidget> createState() => FutureStateBuilderState<T>();
 }
 
-
 class FutureStateBuilderState<T> extends State<FutureStateBuilder<T>> {
   /// An object that identifies the currently active callbacks. Used to avoid
   /// calling setState from stale callbacks, e.g. after disposal of this state,
