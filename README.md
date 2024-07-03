@@ -1,5 +1,9 @@
 # async_state_builder
 
+[![Pub Version](https://img.shields.io/pub/v/async_state_builder.svg)](https://pub.dev/packages/async_state_builder)
+[![Dart Package Docs](https://img.shields.io/badge/documentation-pub.dev-blue.svg)](https://pub.dev/documentation/async_state_builder/latest/)
+[![License: MIT](https://img.shields.io/badge/license-MIT-purple.svg)](https://opensource.org/licenses/MIT)
+
 async_state_builder provides widgets for handling asynchronous data using state machines and pattern matching.
 This package is an improved version of the standard`StreamBuilder` and `FutureBuilder` widgets,
 making it easier to manage and respond to various states of asynchronous computations.
