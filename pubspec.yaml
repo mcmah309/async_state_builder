@@ -1,6 +1,6 @@
 name: async_state_builder
 description: Implementation of the Future Builder and Stream Builder widgets as state machines.
-version: 0.3.2
+version: 0.3.3
 repository: https://github.com/mcmah309/async_state_builder
 
 environment:

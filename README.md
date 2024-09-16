@@ -35,7 +35,7 @@ StreamStateBuilder<int>(
     },
 ),
 ```
-As with pattern matching you can code for only the states you care about
+As with pattern matching, you can code for only the states you care about
 ```dart
 switch (state) {
     Waiting() => const Text('Waiting for data...'),
