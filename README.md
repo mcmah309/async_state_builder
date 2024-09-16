@@ -26,9 +26,9 @@ StreamStateBuilder<int>(
     builder: (BuildContext context, StreamState<int> state) {
         return switch (state) {
             Waiting() => const Text('Waiting for data...'),
-            Data<int>(:final data) => Text('Data sent without error: $data'),
+            Data<int>(:final data) => Text('Data: $data'),
             Closed<int>(:final data?) => Text('Closed, data received before closing: $data'),
-            Closed<int>() => const Text('Stream closed, before any data was sent'),
+            Closed<int>() => const Text('Closed before any data was sent'),
             Error<int>(:final data?, :final error) => Text('Error, data received before error: $data. Error: $error'),
             Error<int>(:final error) => Text('Error received before any data was sent. Error: $error'),
         };
@@ -39,7 +39,7 @@ As with pattern matching, you can code for only the states you care about
 ```dart
 switch (state) {
     Waiting() => const Text('Waiting for data...'),
-    Data<int>(:final data) => Text('Data sent without error: $data'),
+    Data<int>(:final data) => Text('Data: $data'),
     _ => Text('Unexpected state'),
 };
 ```
@@ -51,9 +51,9 @@ FutureStateBuilder<int>(
     future: future,
     builder: (BuildContext context, FutureState<int> state) {
         return switch (state) {
-            Waiting() => const Text('Waiting for data...'),
-            Data<int>(:final data) => Text('Future completed without error. Data: $data'),
-            Error<int>(:final error) => Text('Future completed with error. Error: $error'),
+            Waiting() => const Text('Waiting to finish...'),
+            Data<int>(:final data) => Text('Data: $data'),
+            Error<int>(:final error) => Text('Error: $error'),
         };
     },
 )

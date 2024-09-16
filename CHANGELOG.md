@@ -1,3 +1,7 @@
+## 0.3.4
+
+- Improve Docs
+
 ## 0.3.3
 
 - Improve Docs
