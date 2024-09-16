@@ -23,8 +23,8 @@ Using state machines instead of traditional conditional logic found in `StreamBu
 ```dart
 StreamStateBuilder<int>(
     stream: stream,
-    builder: (BuildContext context, StreamState<int> status) {
-        return switch (status) {
+    builder: (BuildContext context, StreamState<int> state) {
+        return switch (state) {
             Waiting() => const Text('Waiting for data...'),
             Error<int>(:final data?, :final error) => Text('Error, received before error: $data. Error: $error'),
             Closed<int>(:final data?) => Text('Closed, data received before closing: $data'),
@@ -37,7 +37,7 @@ StreamStateBuilder<int>(
 ```
 As with pattern matching you can code for only the states you care about
 ```dart
-switch (status) {
+switch (state) {
     Waiting() => const Text('Waiting for data...'),
     Data<int>(:final data) || Closed<int>(:final data?) => Text('Data sent without error: $data'),
     _ => Text('Unexpected Error'),
@@ -48,8 +48,8 @@ switch (status) {
 ```dart
 FutureStateBuilder<int>(
     future: future,
-    builder: (BuildContext context, FutureState<int> status) {
-        return switch (status) {
+    builder: (BuildContext context, FutureState<int> state) {
+        return switch (state) {
             Waiting() => const Text('Waiting for data...'),
             Data<int>(:final data) => Text('Future completed without error. Data: $data'),
             Error<int>(:final error) => Text('Future completed with error. Error: $error'),

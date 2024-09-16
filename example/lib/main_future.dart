@@ -79,9 +79,9 @@ class FuturePageState extends State<FuturePage> {
                       _hasWaitedTooLong = true;
                     });
                   }),
-                  builder: (BuildContext context, FutureState<int> status) {
+                  builder: (BuildContext context, FutureState<int> state) {
                     return Center(
-                        child: switch (status) {
+                        child: switch (state) {
                       Waiting() => const Text('Waiting for data...'),
                       Data<int>(:final data) =>
                         Text('Future completed without error. Data: $data'),

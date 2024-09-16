@@ -7,7 +7,7 @@ import 'common.dart';
 /// A [StreamBuilder] which the state of the stream can be pattern matched.
 class StreamStateBuilder<T> extends StatefulWidget {
   final Stream<T> stream;
-  final Widget Function(BuildContext context, StreamState<T> value) builder;
+  final Widget Function(BuildContext context, StreamState<T> state) builder;
   final T? initialData;
 
   /// If provided, this is the action that should be taken if the stream is still in [Waiting] after the specified duration.

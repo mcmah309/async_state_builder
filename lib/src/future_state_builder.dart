@@ -7,7 +7,7 @@ import 'common.dart';
 /// A [FutureBuilder] which the state of the future can be pattern matched.
 class FutureStateBuilder<T> extends StatefulWidget {
   final Future<T> future;
-  final Widget Function(BuildContext context, FutureState<T> value) builder;
+  final Widget Function(BuildContext context, FutureState<T> state) builder;
   final T? initialData;
 
   /// If provided, this is the action that should be taken if the future is still in [Waiting] after the specified duration.

@@ -63,9 +63,9 @@ class CounterPageState extends State<CounterPage> {
                   _hasWaitedTooLong = true;
                 });
               }),
-              builder: (BuildContext context, StreamState<int> status) {
+              builder: (BuildContext context, StreamState<int> state) {
                 return Center(
-                    child: switch (status) {
+                    child: switch (state) {
                   Waiting() => const Text('Waiting for data...'),
                   Error<int>(:final data?, :final error) =>
                     Text('Error, recieved before error: $data. Error: $error'),
