@@ -28,18 +28,20 @@ class WaitingTimeoutCallback extends WaitingTimeoutAction {
 
 //************************************************************************//
 
-/// The status of a stream.
+// sealed class StreamState<T> {
+//   const StreamState();
+// }
 
-sealed class StreamState<T> {
-  const StreamState();
+sealed class StreamStateMachineState<T> {
+  const StreamStateMachineState();
 }
 
-sealed class FutureState<T> {
-  const FutureState();
+sealed class FutureStateMachineState<T> {
+  const FutureStateMachineState();
 }
 
-/// The status of a stream that has been closed.
-class Closed<T> extends StreamState<T> {
+/// The state of a stream that has been closed.
+class Closed<T> extends StreamStateMachineState<T> {
   /// The last data that was received before the stream was closed.
   final T? data;
 
@@ -56,8 +58,8 @@ class Closed<T> extends StreamState<T> {
   int get hashCode => data.hashCode;
 }
 
-/// The status of waiting for initial data.
-final class Waiting implements FutureState<Never>, StreamState<Never> {
+/// The state of waiting for initial data.
+final class Waiting implements FutureStateMachineState<Never>, StreamStateMachineState<Never> {
   const Waiting();
 
   @override
@@ -71,8 +73,8 @@ final class Waiting implements FutureState<Never>, StreamState<Never> {
   int get hashCode => 0;
 }
 
-/// The status of has received data.
-final class Data<T> implements FutureState<T>, StreamState<T> {
+/// The state of has received data.
+final class Data<T> implements FutureStateMachineState<T>, StreamStateMachineState<T> {
   final T data;
 
   const Data(this.data);
@@ -88,21 +90,19 @@ final class Data<T> implements FutureState<T>, StreamState<T> {
   int get hashCode => data.hashCode;
 }
 
-/// The status of has received an error.
-final class Error<T> implements FutureState<T>, StreamState<T> {
+/// The state of has received an error.
+final class StreamError<T> implements StreamStateMachineState<T> {
   final Object error;
   final StackTrace stackTrace;
-
-  /// The last data that was received before the error occurred. Will always be null for [FutureState].
   final T? data;
 
-  const Error(this.error, this.stackTrace, [this.data]);
+  const StreamError(this.error, this.stackTrace, [this.data]);
 
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
 
-    return other is Error &&
+    return other is StreamError &&
         other.error == error &&
         other.stackTrace == stackTrace &&
         other.data == data;
@@ -110,4 +110,22 @@ final class Error<T> implements FutureState<T>, StreamState<T> {
 
   @override
   int get hashCode => error.hashCode ^ stackTrace.hashCode ^ data.hashCode;
+}
+
+/// The state of has received an error.
+final class FutureError<T> implements FutureStateMachineState<T> {
+  final Object error;
+  final StackTrace stackTrace;
+
+  const FutureError(this.error, this.stackTrace);
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+
+    return other is StreamError && other.error == error && other.stackTrace == stackTrace;
+  }
+
+  @override
+  int get hashCode => error.hashCode ^ stackTrace.hashCode;
 }

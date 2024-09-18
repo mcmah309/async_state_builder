@@ -7,7 +7,7 @@ import 'common.dart';
 /// A [FutureBuilder] which the state of the future can be pattern matched.
 class FutureStateMachineBuilder<T> extends StatefulWidget {
   final Future<T> future;
-  final Widget Function(BuildContext context, FutureState<T> state) builder;
+  final Widget Function(BuildContext context, FutureStateMachineState<T> state) builder;
   final T? initialData;
 
   /// If provided, this is the action that should be taken if the future is still in [Waiting] after the specified duration.
@@ -38,7 +38,7 @@ class FutureStateMachineBuilderState<T> extends State<FutureStateMachineBuilder<
   /// calling setState from stale callbacks, e.g. after disposal of this state,
   /// or after widget reconfiguration to a new Future.
   Object? _activeCallbackIdentity;
-  FutureState<T>? _status;
+  FutureStateMachineState<T>? _status;
   Timer? _timeoutCallbackOperation;
 
   @override
@@ -91,7 +91,7 @@ class FutureStateMachineBuilderState<T> extends State<FutureStateMachineBuilder<
       _cancelTimeout();
       if (_activeCallbackIdentity == callbackIdentity) {
         setState(() {
-          _status = Error(error, stackTrace);
+          _status = FutureError(error, stackTrace);
         });
       }
       assert(() {

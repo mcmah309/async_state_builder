@@ -11,7 +11,7 @@ import 'package:flutter/widgets.dart';
 class LazyFutureStateMachineBuilder<T> extends StatefulWidget {
   final Future<T> Function() futureFn;
   final Object futureFnKey;
-  final Widget Function(BuildContext context, FutureState<T> state) builder;
+  final Widget Function(BuildContext context, FutureStateMachineState<T> state) builder;
   final T? initialData;
 
   /// If provided, this is the action that should be taken if the future is still in [Waiting] after the specified duration.
