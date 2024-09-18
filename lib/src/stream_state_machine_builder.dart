@@ -3,8 +3,8 @@ import 'dart:async';
 import 'package:async_state_builder/async_state_builder.dart';
 import 'package:flutter/widgets.dart';
 
-/// A [StreamBuilder] which the state of the stream can be pattern matched. States are aware of the previous state
-/// had data, unlike [StreamStateBuilder]
+/// A [StreamBuilder] which the state of the stream can be pattern matched. States are aware of if the previous state
+/// had data, unlike [StreamStateBuilder].
 class StreamStateMachineBuilder<T> extends StatefulWidget {
   final Stream<T> stream;
   final Widget Function(BuildContext context, StreamStateMachineState<T> state) builder;

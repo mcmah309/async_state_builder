@@ -1,7 +1,7 @@
 import 'package:async_state_builder/async_state_builder.dart';
 import 'package:flutter/widgets.dart';
 
-/// [LazyStreamStateMachineBuilder] is a wrapper around [LazyStreamStateMachineBuilder], designed to initiate a stream
+/// [LazyStreamStateMachineBuilder] is a wrapper around [StreamStateMachineBuilder], designed to initiate a stream
 /// through [streamFn] just once for each unique [streamFnKey].
 /// This feature is particularly handy for initiating streams within a widget's build phase without
 /// triggering unnecessary stream rebuilds with every widget update.
