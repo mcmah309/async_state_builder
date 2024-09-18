@@ -7,7 +7,8 @@ import 'package:flutter/widgets.dart';
 /// had data, unlike [StreamStateBuilder].
 class StreamStateMachineBuilder<T> extends StatefulWidget {
   final Stream<T> stream;
-  final Widget Function(BuildContext context, StreamStateMachineState<T> state) builder;
+  final Widget Function(BuildContext context, StreamStateMachineState<T> state)
+      builder;
   final T? initialData;
 
   /// If provided, this is the action that should be taken if the stream is still in [Waiting] after the specified duration.
@@ -29,7 +30,8 @@ class StreamStateMachineBuilder<T> extends StatefulWidget {
   State<StatefulWidget> createState() => StreamStateMachineBuilderState<T>();
 }
 
-class StreamStateMachineBuilderState<T> extends State<StreamStateMachineBuilder<T>> {
+class StreamStateMachineBuilderState<T>
+    extends State<StreamStateMachineBuilder<T>> {
   StreamSubscription<T>? _subscription;
   StreamStateMachineState<T>? _status;
   T? _lastData;

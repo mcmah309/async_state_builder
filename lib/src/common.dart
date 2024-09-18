@@ -60,7 +60,10 @@ class Closed<T> extends StreamStateMachineState<T> {
 
 /// The state of waiting for initial data.
 final class Waiting
-    implements FutureState<Never>, StreamStateMachineState<Never>, StreamState<Never> {
+    implements
+        FutureState<Never>,
+        StreamStateMachineState<Never>,
+        StreamState<Never> {
   const Waiting();
 
   @override
@@ -145,7 +148,9 @@ final class FutureError<T> implements FutureState<T> {
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
 
-    return other is FutureError && other.error == error && other.stackTrace == stackTrace;
+    return other is FutureError &&
+        other.error == error &&
+        other.stackTrace == stackTrace;
   }
 
   @override

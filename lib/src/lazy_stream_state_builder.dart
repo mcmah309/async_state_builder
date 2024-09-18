@@ -29,7 +29,8 @@ class LazyStreamStateBuilder<T> extends StatefulWidget {
   });
 
   @override
-  LazyStreamStateBuilderState<T> createState() => LazyStreamStateBuilderState<T>();
+  LazyStreamStateBuilderState<T> createState() =>
+      LazyStreamStateBuilderState<T>();
 }
 
 class LazyStreamStateBuilderState<T> extends State<LazyStreamStateBuilder<T>> {

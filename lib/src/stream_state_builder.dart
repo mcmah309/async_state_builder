@@ -54,7 +54,7 @@ class StreamStateBuilderState<T> extends State<StreamStateBuilder<T>> {
     if (oldWidget.waitingTimeoutAction != null) {
       _cancelTimeout();
     }
-    if(widget.resetOnStreamObjectChange){
+    if (widget.resetOnStreamObjectChange) {
       _status = null;
     }
     _unsubscribe();

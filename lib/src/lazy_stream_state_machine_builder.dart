@@ -11,7 +11,8 @@ import 'package:flutter/widgets.dart';
 class LazyStreamStateMachineBuilder<T> extends StatefulWidget {
   final Stream<T> Function() streamFn;
   final Object streamFnKey;
-  final Widget Function(BuildContext context, StreamStateMachineState<T> state) builder;
+  final Widget Function(BuildContext context, StreamStateMachineState<T> state)
+      builder;
   final T? initialData;
 
   /// If provided, this is the action that should be taken if the stream is still in [Waiting] after the specified duration.
@@ -31,7 +32,8 @@ class LazyStreamStateMachineBuilder<T> extends StatefulWidget {
       LazyStreamStateMachineBuilderState<T>();
 }
 
-class LazyStreamStateMachineBuilderState<T> extends State<LazyStreamStateMachineBuilder<T>> {
+class LazyStreamStateMachineBuilderState<T>
+    extends State<LazyStreamStateMachineBuilder<T>> {
   late Stream<T> _stream;
 
   @override
