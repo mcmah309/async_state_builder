@@ -4,7 +4,33 @@ import 'package:async_state_builder/src/common.dart';
 import 'package:flutter/widgets.dart';
 
 class _StreamWatcherContainer {
+  static const int cleanUpTimeInMilliseconds = 5000;
+
   static final Map<Stream, _StreamWidgetSubscription> map = {};
+  static bool cleanUpStarted = false;
+
+  /// Since flutter does not allow us to hook into an [Element]s lifecycle. We periodically check
+  /// if the element is mounted. Removing it if so.
+  static void cleanUp() {
+    cleanUpStarted = true;
+    Future.delayed(const Duration(milliseconds: cleanUpTimeInMilliseconds), _cleanUp);
+    if (map.isEmpty) {
+      cleanUpStarted = false;
+    } else {
+      cleanUp();
+    }
+  }
+
+  static void _cleanUp() {
+    List<void Function()> removeFunctions = [];
+    for (final streamWidgetSubscription in map.values) {
+      for (final watcher in streamWidgetSubscription.watchers) {
+        if (!watcher.mounted) {
+          removeFunctions.add(() => streamWidgetSubscription.removeWatcher(watcher));
+        }
+      }
+    }
+  }
 }
 
 class _StreamWidgetSubscription<T> {
@@ -15,6 +41,9 @@ class _StreamWidgetSubscription<T> {
 
   _StreamWidgetSubscription(this.stream, this.lastValue, Element initialWatcher) {
     watchers.add(initialWatcher);
+    if (!_StreamWatcherContainer.cleanUpStarted) {
+      _StreamWatcherContainer.cleanUp();
+    }
   }
 
   void removeWatcher(Element watcher) {
@@ -37,6 +66,7 @@ class _StreamWidgetSubscription<T> {
 }
 
 extension BuildContextExt on BuildContext {
+  /// Watches a stream, rebuilding the current widget each time the stream updates.
   StreamState<T> watchStream<T>(Stream<T> stream, {T? initialValue}) {
     _StreamWidgetSubscription<T>? streamWidgetSubscription =
         _StreamWatcherContainer.map[stream] as _StreamWidgetSubscription<T>?;
