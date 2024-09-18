@@ -44,7 +44,7 @@ switch (state) {
 };
 ```
 
-### StreamStateMachineBuilder
+### StreamStateBuilder
 All states
 ```dart
 StreamStateBuilder<int>(

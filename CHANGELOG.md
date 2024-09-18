@@ -1,3 +1,7 @@
+## 0.4.1
+
+- Doc Update
+
 ## 0.4.0
 
 - Move `StreamStateBuilder` to `StreamStateMachineBuilder`
