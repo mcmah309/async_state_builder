@@ -67,13 +67,13 @@ class CounterPageState extends State<CounterPage> {
                 return Center(
                     child: switch (state) {
                   Waiting() => const Text('Waiting for data...'),
-                  StreamError<int>(:final data?, :final error) =>
+                  StreamStateMachineError<int>(:final data?, :final error) =>
                     Text('Error, data received before error: $data. Error: $error'),
                   Closed<int>(:final data?) =>
                     Text('Closed, data received before closing: $data'),
                   Data<int>(:final data) =>
                     Text('Data sent without error: $data'),
-                  StreamError<int>(:final error) => Text(
+                  StreamStateMachineError<int>(:final error) => Text(
                       'Error received before any data was sent. Error: $error'),
                   Closed<int>() =>
                     const Text('Stream closed, before any data was sent'),

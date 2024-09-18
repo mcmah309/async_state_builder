@@ -16,7 +16,7 @@ class StreamStateMachineBuilder<T> extends StatefulWidget {
   /// If true, the state will be reset when the stream object changes. Otherwise, the last emitted data will be kept.
   final bool resetOnStreamObjectChange;
 
-  /// If true, the last data will be preserved between builds. This is useful to not losing data when the stream becomes [StreamError] or [Closed].
+  /// If true, the last data will be preserved between builds. This is useful to not losing data when the stream becomes [StreamStateMachineError] or [Closed].
   final bool preserveLastData;
 
   const StreamStateMachineBuilder({
@@ -92,7 +92,7 @@ class StreamStateMachineBuilderState<T> extends State<StreamStateMachineBuilder<
     }, onError: (Object error, StackTrace stackTrace) {
       _cancelTimeout();
       setState(() {
-        _status = StreamError(error, stackTrace, _lastData);
+        _status = StreamStateMachineError(error, stackTrace, _lastData);
       });
     }, onDone: () {
       _cancelTimeout();

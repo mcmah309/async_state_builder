@@ -57,13 +57,9 @@ class CounterPageState extends State<CounterPage> {
           ? const Center(child: Text("Waited too long, callback invoked"))
           : switch (context.watchStream(_counterController.stream)) {
               Waiting() => const Text('Waiting for data...'),
-              StreamError<int>(:final data?, :final error) =>
-                Text('Error, data received before error: $data. Error: $error'),
-              Closed<int>(:final data?) => Text('Closed, data received before closing: $data'),
-              Data<int>(:final data) => Text('Data sent without error: $data'),
               StreamError<int>(:final error) =>
-                Text('Error received before any data was sent. Error: $error'),
-              Closed<int>() => const Text('Stream closed, before any data was sent'),
+                Text('Error: $error'),
+              Data<int>(:final data) => Text('Data sent without error: $data'),
             },
       floatingActionButton: Column(
         mainAxisAlignment: MainAxisAlignment.end,

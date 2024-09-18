@@ -10,7 +10,7 @@ class _StreamWatcherContainer {
 class _StreamWidgetSubscription<T> {
   final Stream<T> stream;
   final StreamSubscription<T> subscription;
-  StreamStateMachineState<T> lastValue;
+  StreamState<T> lastValue;
   Set<Element> watchers = {};
 
   _StreamWidgetSubscription(
@@ -38,10 +38,10 @@ class _StreamWidgetSubscription<T> {
 }
 
 extension BuildContextExt on BuildContext {
-  StreamStateMachineState<T> watchStream<T>(Stream<T> stream, {T? initialValue}) {
+  StreamState<T> watchStream<T>(Stream<T> stream, {T? initialValue}) {
     _StreamWidgetSubscription<T>? streamWidgetSubscription =
         _StreamWatcherContainer.map[stream] as _StreamWidgetSubscription<T>?;
-    final StreamStateMachineState<T> state;
+    final StreamState<T> state;
     if (streamWidgetSubscription == null) {
       final element = this as Element;
       final subscription = stream.listen((data) {

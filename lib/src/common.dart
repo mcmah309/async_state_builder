@@ -76,7 +76,7 @@ final class Waiting
 
 /// The state of has received data.
 final class Data<T>
-    implements FutureState<T>, StreamStateMachineState<T>, StreamState<Never> {
+    implements FutureState<T>, StreamStateMachineState<T>, StreamState<T> {
   final T data;
 
   const Data(this.data);
@@ -93,18 +93,18 @@ final class Data<T>
 }
 
 /// The state of has received an error.
-final class StreamError<T> implements StreamStateMachineState<T>, StreamState<Never> {
+final class StreamStateMachineError<T> implements StreamStateMachineState<T> {
   final Object error;
   final StackTrace stackTrace;
   final T? data;
 
-  const StreamError(this.error, this.stackTrace, [this.data]);
+  const StreamStateMachineError(this.error, this.stackTrace, [this.data]);
 
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
 
-    return other is StreamError &&
+    return other is StreamStateMachineError &&
         other.error == error &&
         other.stackTrace == stackTrace &&
         other.data == data;
@@ -112,6 +112,26 @@ final class StreamError<T> implements StreamStateMachineState<T>, StreamState<Ne
 
   @override
   int get hashCode => error.hashCode ^ stackTrace.hashCode ^ data.hashCode;
+}
+
+/// The state of has received an error.
+final class StreamError<T> implements StreamState<T> {
+  final Object error;
+  final StackTrace stackTrace;
+
+  const StreamError(this.error, this.stackTrace);
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+
+    return other is StreamError &&
+        other.error == error &&
+        other.stackTrace == stackTrace;
+  }
+
+  @override
+  int get hashCode => error.hashCode ^ stackTrace.hashCode;
 }
 
 /// The state of has received an error.
@@ -125,7 +145,7 @@ final class FutureError<T> implements FutureState<T> {
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
 
-    return other is StreamError && other.error == error && other.stackTrace == stackTrace;
+    return other is FutureError && other.error == error && other.stackTrace == stackTrace;
   }
 
   @override
