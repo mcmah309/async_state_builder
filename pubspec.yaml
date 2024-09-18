@@ -1,6 +1,6 @@
 name: async_state_builder
-description: Improved versions of FutureBuilder and StreamBuilder as state machines. Useful for handling Futures and Streams.
-version: 0.3.4
+description: Lightweight and improved versions of FutureBuilder and StreamBuilder as state machines. Useful for handling Futures and Streams.
+version: 0.4.0
 repository: https://github.com/mcmah309/async_state_builder
 
 environment:

@@ -1,3 +1,9 @@
+## 0.4.0
+
+- Move `StreamStateBuilder` to `StreamStateMachineBuilder`
+- Implement more concise `StreamStateBuilder`
+- Refactor `State` names
+
 ## 0.3.4
 
 - Improve Docs

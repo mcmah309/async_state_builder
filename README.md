@@ -4,7 +4,7 @@
 [![Dart Package Docs](https://img.shields.io/badge/documentation-pub.dev-blue.svg)](https://pub.dev/documentation/async_state_builder/latest/)
 [![License: MIT](https://img.shields.io/badge/license-MIT-purple.svg)](https://opensource.org/licenses/MIT)
 
-async_state_builder provides widgets for handling asynchronous data using state machines and pattern matching.
+async_state_builder provides lightweight widgets for handling asynchronous data using state machines and pattern matching.
 This package is an improved version of the standard`StreamBuilder` and `FutureBuilder` widgets,
 making it easier to manage and respond to various states of asynchronous computations.
 
@@ -18,10 +18,10 @@ Using state machines instead of traditional conditional logic found in `StreamBu
 
 ## Usage
 
-### StreamStateBuilder
+### StreamStateMachineBuilder
 All states
 ```dart
-StreamStateBuilder<int>(
+StreamStateMachineBuilder<int>(
     stream: stream,
     builder: (BuildContext context, StreamState<int> state) {
         return switch (state) {
@@ -29,8 +29,8 @@ StreamStateBuilder<int>(
             Data<int>(:final data) => Text('Data: $data'),
             Closed<int>(:final data?) => Text('Closed, data received before closing: $data'),
             Closed<int>() => const Text('Closed before any data was sent'),
-            Error<int>(:final data?, :final error) => Text('Error, data received before error: $data. Error: $error'),
-            Error<int>(:final error) => Text('Error received before any data was sent. Error: $error'),
+            StreamStateMachineError<int>(:final data?, :final error) => Text('Error, data received before error: $data. Error: $error'),
+            StreamStateMachineError<int>(:final error) => Text('Error received before any data was sent. Error: $error'),
         };
     },
 ),
@@ -44,6 +44,21 @@ switch (state) {
 };
 ```
 
+### StreamStateMachineBuilder
+All states
+```dart
+StreamStateBuilder<int>(
+    stream: stream,
+    builder: (BuildContext context, StreamState<int> state) {
+        return switch (state) {
+            Waiting() => const Text('Waiting for data...'),
+            Data<int>(:final data) => Text('Data: $data'),
+            StreamError<int>(:final error) => Text('Error: $error'),
+        };
+    },
+),
+```
+
 ### FutureStateBuilder
 All states
 ```dart
@@ -53,7 +68,7 @@ FutureStateBuilder<int>(
         return switch (state) {
             Waiting() => const Text('Waiting to finish...'),
             Data<int>(:final data) => Text('Data: $data'),
-            Error<int>(:final error) => Text('Error: $error'),
+            FutureError<int>(:final error) => Text('Error: $error'),
         };
     },
 )
