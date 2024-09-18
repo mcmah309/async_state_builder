@@ -5,15 +5,15 @@ import 'package:flutter/widgets.dart';
 import 'common.dart';
 
 /// A [FutureBuilder] which the state of the future can be pattern matched.
-class FutureStateMachineBuilder<T> extends StatefulWidget {
+class FutureStateBuilder<T> extends StatefulWidget {
   final Future<T> future;
-  final Widget Function(BuildContext context, FutureStateMachineState<T> state) builder;
+  final Widget Function(BuildContext context, FutureState<T> state) builder;
   final T? initialData;
 
   /// If provided, this is the action that should be taken if the future is still in [Waiting] after the specified duration.
   final WaitingTimeoutAction? waitingTimeoutAction;
 
-  const FutureStateMachineBuilder({
+  const FutureStateBuilder({
     super.key,
     required this.future,
     required this.builder,
@@ -30,15 +30,15 @@ class FutureStateMachineBuilder<T> extends StatefulWidget {
   static bool debugRethrowError = false;
 
   @override
-  State<StatefulWidget> createState() => FutureStateMachineBuilderState<T>();
+  State<StatefulWidget> createState() => FutureStateBuilderState<T>();
 }
 
-class FutureStateMachineBuilderState<T> extends State<FutureStateMachineBuilder<T>> {
+class FutureStateBuilderState<T> extends State<FutureStateBuilder<T>> {
   /// An object that identifies the currently active callbacks. Used to avoid
   /// calling setState from stale callbacks, e.g. after disposal of this state,
   /// or after widget reconfiguration to a new Future.
   Object? _activeCallbackIdentity;
-  FutureStateMachineState<T>? _status;
+  FutureState<T>? _status;
   Timer? _timeoutCallbackOperation;
 
   @override
@@ -51,7 +51,7 @@ class FutureStateMachineBuilderState<T> extends State<FutureStateMachineBuilder<
   }
 
   @override
-  void didUpdateWidget(FutureStateMachineBuilder<T> oldWidget) {
+  void didUpdateWidget(FutureStateBuilder<T> oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.future == widget.future) {
       return;
@@ -95,7 +95,7 @@ class FutureStateMachineBuilderState<T> extends State<FutureStateMachineBuilder<
         });
       }
       assert(() {
-        if (FutureStateMachineBuilder.debugRethrowError) {
+        if (FutureStateBuilder.debugRethrowError) {
           Future<Object>.error(error, stackTrace);
         }
         return true;

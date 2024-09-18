@@ -1,23 +1,23 @@
 import 'package:async_state_builder/async_state_builder.dart';
 import 'package:flutter/widgets.dart';
 
-/// [LazyFutureStateMachineBuilder] is a wrapper around [FutureStateMachineBuilder], designed to initiate a future
+/// [LazyFutureStateBuilder] is a wrapper around [FutureStateBuilder], designed to initiate a future
 /// through [futureFn] just once for each unique [futureFnKey].
 /// This feature is particularly handy for initiating futures within a widget's build phase without
 /// triggering unnecessary future rebuilds with every widget update.
 /// e.g. If you want the [futureFn] to be called anytime a parameter changes, you can use those parameters as the key (A,B,C,...).
 /// e.g. You want the [futureFn] to be called on every build, you can use Object() as the key.
 /// e.g. You want the [futureFn] to never be called on rebuild, you can use `const Object()` or `0`.
-class LazyFutureStateMachineBuilder<T> extends StatefulWidget {
+class LazyFutureStateBuilder<T> extends StatefulWidget {
   final Future<T> Function() futureFn;
   final Object futureFnKey;
-  final Widget Function(BuildContext context, FutureStateMachineState<T> state) builder;
+  final Widget Function(BuildContext context, FutureState<T> state) builder;
   final T? initialData;
 
   /// If provided, this is the action that should be taken if the future is still in [Waiting] after the specified duration.
   final WaitingTimeoutAction? waitingTimeoutAction;
 
-  const LazyFutureStateMachineBuilder({
+  const LazyFutureStateBuilder({
     super.key,
     required this.futureFn,
     required this.futureFnKey,
@@ -27,11 +27,11 @@ class LazyFutureStateMachineBuilder<T> extends StatefulWidget {
   });
 
   @override
-  LazyFutureStateMachineBuilderState<T> createState() =>
-      LazyFutureStateMachineBuilderState<T>();
+  LazyFutureStateBuilderState<T> createState() =>
+      LazyFutureStateBuilderState<T>();
 }
 
-class LazyFutureStateMachineBuilderState<T> extends State<LazyFutureStateMachineBuilder<T>> {
+class LazyFutureStateBuilderState<T> extends State<LazyFutureStateBuilder<T>> {
   late Future<T> _future;
 
   @override
@@ -41,7 +41,7 @@ class LazyFutureStateMachineBuilderState<T> extends State<LazyFutureStateMachine
   }
 
   @override
-  void didUpdateWidget(LazyFutureStateMachineBuilder<T> oldWidget) {
+  void didUpdateWidget(LazyFutureStateBuilder<T> oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.futureFnKey != widget.futureFnKey) {
       _future = widget.futureFn();
@@ -50,7 +50,7 @@ class LazyFutureStateMachineBuilderState<T> extends State<LazyFutureStateMachine
 
   @override
   Widget build(BuildContext context) {
-    return FutureStateMachineBuilder(
+    return FutureStateBuilder(
         future: _future,
         builder: widget.builder,
         initialData: widget.initialData,

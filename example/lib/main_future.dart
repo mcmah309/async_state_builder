@@ -71,7 +71,7 @@ class FuturePageState extends State<FuturePage> {
           ? const Center(child: Text("Waited too long, callback invoked"))
           : (_future == null
               ? const Center(child: Text("No future selected."))
-              : FutureStateMachineBuilder<int>(
+              : FutureStateBuilder<int>(
                   future: _future!,
                   waitingTimeoutAction:
                       WaitingTimeoutCallback(const Duration(seconds: 5), () {
@@ -79,7 +79,7 @@ class FuturePageState extends State<FuturePage> {
                       _hasWaitedTooLong = true;
                     });
                   }),
-                  builder: (BuildContext context, FutureStateMachineState<int> state) {
+                  builder: (BuildContext context, FutureState<int> state) {
                     return Center(
                         child: switch (state) {
                       Waiting() => const Text('Waiting for data...'),

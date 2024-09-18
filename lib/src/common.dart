@@ -28,16 +28,16 @@ class WaitingTimeoutCallback extends WaitingTimeoutAction {
 
 //************************************************************************//
 
-// sealed class StreamState<T> {
-//   const StreamState();
-// }
+sealed class StreamState<T> {
+  const StreamState();
+}
 
 sealed class StreamStateMachineState<T> {
   const StreamStateMachineState();
 }
 
-sealed class FutureStateMachineState<T> {
-  const FutureStateMachineState();
+sealed class FutureState<T> {
+  const FutureState();
 }
 
 /// The state of a stream that has been closed.
@@ -59,7 +59,8 @@ class Closed<T> extends StreamStateMachineState<T> {
 }
 
 /// The state of waiting for initial data.
-final class Waiting implements FutureStateMachineState<Never>, StreamStateMachineState<Never> {
+final class Waiting
+    implements FutureState<Never>, StreamStateMachineState<Never>, StreamState<Never> {
   const Waiting();
 
   @override
@@ -74,7 +75,8 @@ final class Waiting implements FutureStateMachineState<Never>, StreamStateMachin
 }
 
 /// The state of has received data.
-final class Data<T> implements FutureStateMachineState<T>, StreamStateMachineState<T> {
+final class Data<T>
+    implements FutureState<T>, StreamStateMachineState<T>, StreamState<Never> {
   final T data;
 
   const Data(this.data);
@@ -91,7 +93,7 @@ final class Data<T> implements FutureStateMachineState<T>, StreamStateMachineSta
 }
 
 /// The state of has received an error.
-final class StreamError<T> implements StreamStateMachineState<T> {
+final class StreamError<T> implements StreamStateMachineState<T>, StreamState<Never> {
   final Object error;
   final StackTrace stackTrace;
   final T? data;
@@ -113,7 +115,7 @@ final class StreamError<T> implements StreamStateMachineState<T> {
 }
 
 /// The state of has received an error.
-final class FutureError<T> implements FutureStateMachineState<T> {
+final class FutureError<T> implements FutureState<T> {
   final Object error;
   final StackTrace stackTrace;
 
