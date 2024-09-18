@@ -9,12 +9,11 @@ class _StreamWatcherContainer {
 
 class _StreamWidgetSubscription<T> {
   final Stream<T> stream;
-  final StreamSubscription<T> subscription;
+  late final StreamSubscription<T> subscription;
   StreamState<T> lastValue;
   Set<Element> watchers = {};
 
-  _StreamWidgetSubscription(
-      this.stream, this.subscription, this.lastValue, Element initialWatcher) {
+  _StreamWidgetSubscription(this.stream, this.lastValue, Element initialWatcher) {
     watchers.add(initialWatcher);
   }
 
@@ -44,6 +43,13 @@ extension BuildContextExt on BuildContext {
     final StreamState<T> state;
     if (streamWidgetSubscription == null) {
       final element = this as Element;
+      if (initialValue == null) {
+        state = const Waiting();
+      } else {
+        state = Data(initialValue);
+      }
+      streamWidgetSubscription = _StreamWidgetSubscription(stream, state, element);
+      _StreamWatcherContainer.map[stream] = streamWidgetSubscription;
       final subscription = stream.listen((data) {
         if (element.mounted) {
           element.markNeedsBuild();
@@ -61,13 +67,8 @@ extension BuildContextExt on BuildContext {
           _StreamWatcherContainer.map[stream]!.removeWatcher(element);
         }
       });
-      if (initialValue == null) {
-        state = const Waiting();
-      } else {
-        state = Data(initialValue);
-      }
-      streamWidgetSubscription = _StreamWidgetSubscription(stream, subscription, state, element);
-      _StreamWatcherContainer.map[stream] = streamWidgetSubscription;
+      // An implementation like a sync stream may have already ran the above, so this added later.
+      streamWidgetSubscription.subscription = subscription;
     } else {
       state = streamWidgetSubscription.lastValue;
     }
