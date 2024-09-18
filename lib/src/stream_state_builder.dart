@@ -1,10 +1,9 @@
 import 'dart:async';
 
+import 'package:async_state_builder/async_state_builder.dart';
 import 'package:flutter/widgets.dart';
 
-import 'common.dart';
-
-/// A [StreamBuilder] which the state of the stream can be pattern matched.
+/// A [StreamBuilder] which the state of the stream can be pattern matched. States are not aware of the previous state, unlike [StreamStateMachineBuilder]
 class StreamStateBuilder<T> extends StatefulWidget {
   final Stream<T> stream;
   final Widget Function(BuildContext context, StreamState<T> state) builder;
@@ -17,9 +16,6 @@ class StreamStateBuilder<T> extends StatefulWidget {
   /// If true, the state will be reset when the stream object changes. Otherwise, the last emitted data will be kept.
   final bool resetOnStreamObjectChange;
 
-  /// If true, the last data will be preserved between builds. This is useful to not losing data when the stream becomes [StreamStateMachineError] or [Closed].
-  final bool preserveLastData;
-
   const StreamStateBuilder({
     super.key,
     required this.stream,
@@ -28,7 +24,6 @@ class StreamStateBuilder<T> extends StatefulWidget {
     this.initialData,
     this.waitingTimeoutAction,
     this.resetOnStreamObjectChange = true,
-    this.preserveLastData = true,
   });
 
   @override
@@ -38,7 +33,6 @@ class StreamStateBuilder<T> extends StatefulWidget {
 class StreamStateBuilderState<T> extends State<StreamStateBuilder<T>> {
   StreamSubscription<T>? _subscription;
   StreamState<T>? _status;
-  T? _lastData;
   Timer? _timeoutCallbackOperation;
 
   @override
@@ -60,13 +54,10 @@ class StreamStateBuilderState<T> extends State<StreamStateBuilder<T>> {
     if (oldWidget.waitingTimeoutAction != null) {
       _cancelTimeout();
     }
-    if (widget.resetOnStreamObjectChange) {
-      _lastData = null;
-    }
-    if (_subscription != null) {
-      _unsubscribe();
+    if(widget.resetOnStreamObjectChange){
       _status = null;
     }
+    _unsubscribe();
     _subscribe();
     if (widget.waitingTimeoutAction != null && _status is Waiting) {
       _setTimeout();
@@ -89,7 +80,6 @@ class StreamStateBuilderState<T> extends State<StreamStateBuilder<T>> {
       setState(() {
         final newData = Data(data);
         _status = newData;
-        _lastData = data;
       });
     }, onError: (Object error, StackTrace stackTrace) {
       _cancelTimeout();
@@ -105,7 +95,6 @@ class StreamStateBuilderState<T> extends State<StreamStateBuilder<T>> {
       if (widget.initialData == null) {
         _status = const Waiting();
       } else {
-        _lastData = widget.initialData;
         _status = Data(widget.initialData as T);
       }
     }

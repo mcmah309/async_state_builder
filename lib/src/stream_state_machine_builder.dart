@@ -1,10 +1,10 @@
 import 'dart:async';
 
+import 'package:async_state_builder/async_state_builder.dart';
 import 'package:flutter/widgets.dart';
 
-import 'common.dart';
-
-/// A [StreamBuilder] which the state of the stream can be pattern matched.
+/// A [StreamBuilder] which the state of the stream can be pattern matched. States are aware of the previous state
+/// had data, unlike [StreamStateBuilder]
 class StreamStateMachineBuilder<T> extends StatefulWidget {
   final Stream<T> stream;
   final Widget Function(BuildContext context, StreamStateMachineState<T> state) builder;
@@ -16,9 +16,6 @@ class StreamStateMachineBuilder<T> extends StatefulWidget {
   /// If true, the state will be reset when the stream object changes. Otherwise, the last emitted data will be kept.
   final bool resetOnStreamObjectChange;
 
-  /// If true, the last data will be preserved between builds. This is useful to not losing data when the stream becomes [StreamStateMachineError] or [Closed].
-  final bool preserveLastData;
-
   const StreamStateMachineBuilder({
     super.key,
     required this.stream,
@@ -26,7 +23,6 @@ class StreamStateMachineBuilder<T> extends StatefulWidget {
     this.initialData,
     this.waitingTimeoutAction,
     this.resetOnStreamObjectChange = true,
-    this.preserveLastData = true,
   });
 
   @override
@@ -60,11 +56,9 @@ class StreamStateMachineBuilderState<T> extends State<StreamStateMachineBuilder<
     }
     if (widget.resetOnStreamObjectChange) {
       _lastData = null;
-    }
-    if (_subscription != null) {
-      _unsubscribe();
       _status = null;
     }
+    _unsubscribe();
     _subscribe();
     if (widget.waitingTimeoutAction != null && _status is Waiting) {
       _setTimeout();
