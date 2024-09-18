@@ -5,7 +5,7 @@ import 'package:flutter/widgets.dart';
 import 'common.dart';
 
 /// A [FutureBuilder] which the state of the future can be pattern matched.
-class FutureStateBuilder<T> extends StatefulWidget {
+class FutureStateMachineBuilder<T> extends StatefulWidget {
   final Future<T> future;
   final Widget Function(BuildContext context, FutureState<T> state) builder;
   final T? initialData;
@@ -13,7 +13,7 @@ class FutureStateBuilder<T> extends StatefulWidget {
   /// If provided, this is the action that should be taken if the future is still in [Waiting] after the specified duration.
   final WaitingTimeoutAction? waitingTimeoutAction;
 
-  const FutureStateBuilder({
+  const FutureStateMachineBuilder({
     super.key,
     required this.future,
     required this.builder,
@@ -30,10 +30,10 @@ class FutureStateBuilder<T> extends StatefulWidget {
   static bool debugRethrowError = false;
 
   @override
-  State<StatefulWidget> createState() => FutureStateBuilderState<T>();
+  State<StatefulWidget> createState() => FutureStateMachineBuilderState<T>();
 }
 
-class FutureStateBuilderState<T> extends State<FutureStateBuilder<T>> {
+class FutureStateMachineBuilderState<T> extends State<FutureStateMachineBuilder<T>> {
   /// An object that identifies the currently active callbacks. Used to avoid
   /// calling setState from stale callbacks, e.g. after disposal of this state,
   /// or after widget reconfiguration to a new Future.
@@ -51,7 +51,7 @@ class FutureStateBuilderState<T> extends State<FutureStateBuilder<T>> {
   }
 
   @override
-  void didUpdateWidget(FutureStateBuilder<T> oldWidget) {
+  void didUpdateWidget(FutureStateMachineBuilder<T> oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.future == widget.future) {
       return;
@@ -95,7 +95,7 @@ class FutureStateBuilderState<T> extends State<FutureStateBuilder<T>> {
         });
       }
       assert(() {
-        if (FutureStateBuilder.debugRethrowError) {
+        if (FutureStateMachineBuilder.debugRethrowError) {
           Future<Object>.error(error, stackTrace);
         }
         return true;

@@ -71,7 +71,7 @@ class FuturePageState extends State<FuturePage> {
           ? const Center(child: Text("Waited too long, callback invoked"))
           : (_future == null
               ? const Center(child: Text("No future selected."))
-              : FutureStateBuilder<int>(
+              : FutureStateMachineBuilder<int>(
                   future: _future!,
                   waitingTimeoutAction:
                       WaitingTimeoutCallback(const Duration(seconds: 5), () {

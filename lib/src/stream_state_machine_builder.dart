@@ -5,7 +5,7 @@ import 'package:flutter/widgets.dart';
 import 'common.dart';
 
 /// A [StreamBuilder] which the state of the stream can be pattern matched.
-class StreamStateBuilder<T> extends StatefulWidget {
+class StreamStateMachineBuilder<T> extends StatefulWidget {
   final Stream<T> stream;
   final Widget Function(BuildContext context, StreamState<T> state) builder;
   final T? initialData;
@@ -19,7 +19,7 @@ class StreamStateBuilder<T> extends StatefulWidget {
   /// If true, the last data will be preserved between builds. This is useful to not losing data when the stream becomes [Error] or [Closed].
   final bool preserveLastData;
 
-  const StreamStateBuilder({
+  const StreamStateMachineBuilder({
     super.key,
     required this.stream,
     required this.builder,
@@ -30,10 +30,10 @@ class StreamStateBuilder<T> extends StatefulWidget {
   });
 
   @override
-  State<StatefulWidget> createState() => StreamStateBuilderState<T>();
+  State<StatefulWidget> createState() => StreamStateMachineBuilderState<T>();
 }
 
-class StreamStateBuilderState<T> extends State<StreamStateBuilder<T>> {
+class StreamStateMachineBuilderState<T> extends State<StreamStateMachineBuilder<T>> {
   StreamSubscription<T>? _subscription;
   StreamState<T>? _status;
   T? _lastData;
@@ -50,7 +50,7 @@ class StreamStateBuilderState<T> extends State<StreamStateBuilder<T>> {
   }
 
   @override
-  void didUpdateWidget(StreamStateBuilder<T> oldWidget) {
+  void didUpdateWidget(StreamStateMachineBuilder<T> oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.stream == widget.stream) {
       return;

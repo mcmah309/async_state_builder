@@ -55,7 +55,7 @@ class CounterPageState extends State<CounterPage> {
       ),
       body: _hasWaitedTooLong
           ? const Center(child: Text("Waited too long, callback invoked"))
-          : StreamStateBuilder<int>(
+          : StreamStateMachineBuilder<int>(
               stream: _counterController.stream,
               waitingTimeoutAction:
                   WaitingTimeoutCallback(const Duration(seconds: 5), () {
