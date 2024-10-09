@@ -1,3 +1,7 @@
+## 0.4.2
+
+- Re-arrange code for better completion
+
 ## 0.4.1
 
 - Doc Update
